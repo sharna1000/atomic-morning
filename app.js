@@ -183,7 +183,11 @@ async function loadFromGitHub() {
             return true;
         }
 
-        if (!res.ok) throw new Error(`GitHub ${res.status}`);
+        if (!res.ok) {
+            // Surface the exact status so we can diagnose
+            const body = await res.json().catch(() => ({}));
+            throw new Error(`HTTP ${res.status}: ${body.message || 'unknown error'}`);
+        }
 
         const file = await res.json();
         ghFileSha = file.sha;
@@ -201,7 +205,8 @@ async function loadFromGitHub() {
         return true;
     } catch (err) {
         console.error('GitHub load failed:', err);
-        return false;
+        // Re-throw so saveGhConfig can show the real message
+        throw err;
     }
 }
 
@@ -636,12 +641,16 @@ async function saveGhConfig() {
     saveGhConfigLocal();
 
     setGhStatus('Connecting…', '');
-    const ok = await loadFromGitHub();
-    if (ok) {
-        setGhStatus('Connected. Data loaded from GitHub.', 'success');
-        renderAll();
-    } else {
-        setGhStatus('Could not connect. Check your username, repo name, and token permissions.', 'error');
+    try {
+        const ok = await loadFromGitHub();
+        if (ok) {
+            setGhStatus('Connected. Data loaded from GitHub.', 'success');
+            renderAll();
+        } else {
+            setGhStatus('Could not connect — unknown error. Check the browser console (F12).', 'error');
+        }
+    } catch (err) {
+        setGhStatus(`Connection failed: ${err.message}`, 'error');
     }
 }
 
