@@ -176,8 +176,9 @@ async function loadFromGitHub() {
             },
         });
 
-        if (res.status === 404) {
-            // Data file doesn't exist yet — first run
+        if (res.status === 404 || res.status === 409) {
+            // 404 = file doesn't exist yet (first run)
+            // 409 = repo exists but is completely empty (no commits yet) — also fine
             ghFileSha = null;
             return true;
         }
