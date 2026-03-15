@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atomic Morning</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div id="app">
+
+        <!-- ── Header ── -->
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Atomic Morning</h1>
+                    <span class="tagline">Small habits. Big life.</span>
+                </div>
+                <div class="header-meta">
+                    <span id="current-date"></span>
+                    <span id="sync-status" class="sync-status"></span>
+                </div>
+            </div>
+            <nav>
+                <button class="tab-btn active" data-tab="today">Today</button>
+                <button class="tab-btn" data-tab="habits">Habits</button>
+                <button class="tab-btn" data-tab="stacks">Stacks</button>
+                <button class="tab-btn" data-tab="progress">Progress</button>
+                <button class="tab-btn" data-tab="settings">Settings</button>
+            </nav>
+        </header>
+
+        <!-- ── Today Tab ── -->
+        <main id="tab-today" class="tab-content active">
+            <p class="greeting" id="greeting"></p>
+
+            <div class="quote-card" id="daily-quote"></div>
+
+            <div class="identity-card" id="identity-display"></div>
+
+            <section class="section">
+                <div class="section-header">
+                    <h2>Today's Habits</h2>
+                    <span class="date-label" id="today-label"></span>
+                </div>
+                <div id="habits-checklist"></div>
+                <p class="empty-state" id="habits-empty">No habits yet — add some in the Habits tab.</p>
+            </section>
+
+            <section class="section" id="stacks-today-section">
+                <h2>Today's Habit Stacks</h2>
+                <div id="stacks-reminder"></div>
+            </section>
+
+            <section class="section">
+                <h2>Day Plan</h2>
+                <div class="day-plan-form">
+                    <div class="form-group">
+                        <label for="mit-input">Most Important Task</label>
+                        <input type="text" id="mit-input" placeholder="What's the one thing that matters most today?" />
+                    </div>
+                    <div class="form-group">
+                        <label>Today's Intentions</label>
+                        <input type="text" id="intention-1" placeholder="Intention 1" />
+                        <input type="text" id="intention-2" placeholder="Intention 2" />
+                        <input type="text" id="intention-3" placeholder="Intention 3" />
+                    </div>
+                    <button class="btn btn-primary" id="save-day-plan">Save Day Plan</button>
+                    <p class="save-feedback" id="plan-saved-msg"></p>
+                </div>
+            </section>
+        </main>
+
+        <!-- ── Habits Tab ── -->
+        <main id="tab-habits" class="tab-content">
+            <div class="section-header page-header">
+                <h2>My Habits</h2>
+                <button class="btn btn-primary" id="add-habit-btn">+ Add Habit</button>
+            </div>
+            <div id="habits-list"></div>
+            <p class="empty-state" id="habits-list-empty">No habits yet. Add your first one above.</p>
+        </main>
+
+        <!-- ── Stacks Tab ── -->
+        <main id="tab-stacks" class="tab-content">
+            <div class="section-header page-header">
+                <h2>Habit Stacks</h2>
+                <button class="btn btn-primary" id="add-stack-btn">+ Add Stack</button>
+            </div>
+            <p class="stack-explainer">Link a new habit to an existing one: <em>"After [current habit], I will [new habit]."</em></p>
+            <div id="stacks-list"></div>
+            <p class="empty-state" id="stacks-empty">No habit stacks yet. Add your first one above.</p>
+        </main>
+
+        <!-- ── Progress Tab ── -->
+        <main id="tab-progress" class="tab-content">
+            <h2 class="page-title">Progress</h2>
+            <div id="progress-cards"></div>
+        </main>
+
+        <!-- ── Settings Tab ── -->
+        <main id="tab-settings" class="tab-content">
+            <h2 class="page-title">Settings</h2>
+
+            <section class="section">
+                <h3>Personal</h3>
+                <div class="form-group">
+                    <label for="setting-name">Your Name</label>
+                    <input type="text" id="setting-name" placeholder="Your first name" />
+                </div>
+                <div class="form-group">
+                    <label for="setting-identity">Identity Statement</label>
+                    <input type="text" id="setting-identity" placeholder="I am someone who..." />
+                    <small>e.g. "I am someone who prioritises their health every day."</small>
+                </div>
+                <button class="btn btn-primary" id="save-settings-btn">Save Settings</button>
+            </section>
+
+            <section class="section">
+                <h3>GitHub Sync</h3>
+                <p class="explainer">
+                    Store your data in a private GitHub repository so it syncs across all your devices.
+                    You'll need a GitHub Personal Access Token with <code>repo</code> scope, pointing to a
+                    <strong>separate private repo</strong> used only for your data (not this app's repo).
+                </p>
+                <div class="form-group">
+                    <label for="github-owner">GitHub Username</label>
+                    <input type="text" id="github-owner" placeholder="your-username" autocomplete="off" />
+                </div>
+                <div class="form-group">
+                    <label for="github-repo">Data Repository Name</label>
+                    <input type="text" id="github-repo" placeholder="atomic-morning-data" autocomplete="off" />
+                </div>
+                <div class="form-group">
+                    <label for="github-pat">Personal Access Token</label>
+                    <input type="password" id="github-pat" placeholder="ghp_..." autocomplete="off" />
+                    <small>Stored only in this browser. Only sent to GitHub's API — never anywhere else.</small>
+                </div>
+                <div class="btn-row">
+                    <button class="btn btn-primary" id="save-github-btn">Save &amp; Connect</button>
+                    <button class="btn btn-secondary" id="sync-now-btn">Sync Now</button>
+                </div>
+                <p id="github-status" class="status-msg"></p>
+            </section>
+
+            <section class="section">
+                <h3>Data</h3>
+                <div class="btn-row">
+                    <button class="btn btn-outline" id="export-data-btn">Export Data (JSON)</button>
+                    <button class="btn btn-danger-outline" id="clear-data-btn">Clear Local Data</button>
+                </div>
+            </section>
+        </main>
+
+    </div><!-- /#app -->
+
+    <!-- ── Modal: Add / Edit Habit ── -->
+    <div class="modal" id="habit-modal" role="dialog" aria-modal="true" aria-labelledby="habit-modal-title">
+        <h3 id="habit-modal-title">Add Habit</h3>
+        <div class="form-group">
+            <label for="habit-name">Habit Name</label>
+            <input type="text" id="habit-name" placeholder="e.g. Read 10 pages" />
+        </div>
+        <div class="form-group">
+            <label for="habit-identity">Identity Statement <small>(optional)</small></label>
+            <input type="text" id="habit-identity" placeholder="e.g. I am a reader" />
+        </div>
+        <div class="form-group">
+            <label for="habit-cue">Cue / Trigger <small>(optional)</small></label>
+            <input type="text" id="habit-cue" placeholder="e.g. Every morning after coffee" />
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-primary" id="save-habit-btn">Save</button>
+            <button class="btn btn-secondary modal-close" data-modal="habit-modal">Cancel</button>
+        </div>
+    </div>
+
+    <!-- ── Modal: Add / Edit Stack ── -->
+    <div class="modal" id="stack-modal" role="dialog" aria-modal="true" aria-labelledby="stack-modal-title">
+        <h3 id="stack-modal-title">Add Habit Stack</h3>
+        <p class="modal-formula">After [trigger], I will [new habit].</p>
+        <div class="form-group">
+            <label for="stack-trigger">After I...</label>
+            <input type="text" id="stack-trigger" placeholder="e.g. pour my morning coffee" />
+        </div>
+        <div class="form-group">
+            <label for="stack-action">I will...</label>
+            <input type="text" id="stack-action" placeholder="e.g. write in my journal for 5 minutes" />
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-primary" id="save-stack-btn">Save</button>
+            <button class="btn btn-secondary modal-close" data-modal="stack-modal">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Modal overlay -->
+    <div class="modal-overlay" id="modal-overlay"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
